@@ -7,7 +7,7 @@
 
    CRC: Cyclic Redundancy Check
 
-   Data Link Layer: CRC for error checking.
+   Data Link Layer: CRC for error checking
 
 
 */
