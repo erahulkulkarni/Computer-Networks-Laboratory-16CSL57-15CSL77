@@ -173,28 +173,52 @@
    From cipher c = 1 59 61, message obtained, m = 1 2 3
  */
 
- // Select data type that is big enough to hold large integers
- // Possibly, long int should suffice
+ #include <stdio.h>
+ #include <math.h>
+
+ int gcd(int m , int n )// ALGORITHM Euclid(m, n), gcd: greatest common divisor
+  {                     //   Computes gcd(m, n) by Euclid’s algorithm
+    int r = 0;          //   Input: Two nonnegative, not-both-zero integers m and n
+    char temp;          //   Output: Greatest common divisor of m and n
+    while( n!=0 )       //   while n != 0
+     {                  //     do
+       r = m % n;       //       r ← m mod n
+       m = n;           //       m ← n
+       n = r;           //       n ← r
+     }                  //     done
+    return m;           //   return m
+  }
 
  int main()
   { 
+    int p, q, n, lambdaN, d, e, length, i;
+    int message[10], cipher[10];
+
+    // read two distinct prime numbers, p, and q
+
+    // Compute n = p*q
+    // Compute totient of the product λ(n)=(p−1)*(q−1)
+
+    // choose number e, such that 1 < e < λ(n) and is coprime to λ(n)
+    // Find e, such that gcd( e, λ(n) ) = 1, Greatest common divisor of e and λ(n)
+    // Two numbers e and λ(n) are co prime if gcd( e, λ(n) ) = 1, 
+    // That is no common divisor other than 1
+
+    printf("\n Public key = ( %d, %d )", n, e);
+
+    // Private key, d, such that,    d * e mod λ(n) = 1
+    printf("\n Private key = ( %d, %d )", n, d);
+
+    printf("\n Enter length of message: ");    scanf("%d", &length);
+
+    // read message 
+
+    // At sender, encrypt message to cipher, cipher
+
+    // At receiver, decrypt cipher to message, message
 
     return 0;
   }
-
- /*
-   ALGORITHM Euclid(m, n)
-     Computes gcd(m, n) by Euclid’s algorithm
-     Input: Two nonnegative, not-both-zero integers m and n
-     Output: Greatest common divisor of m and n
-     while n != 0 
-       do
-         r ← m mod n
-         m ← n
-         n ← r
-       done 
-     return m
-*/
 
  /*Textbook: 
    Behrouz Forouzon - Data Communications and Networking, McGraw Hill Edition 
