@@ -73,8 +73,27 @@
 
       for  t  ← 0 to bucketRate
         outgoingPacket = dequeue( contentOfIncomingPacket )
-        print outgoingPacket
+        print outgoingPacket transmitted
     
+ */
+
+ /* circular queue
+    front = -1
+    rear = -1
+
+    full if ( front == 0 && rear == size-1 ) or ( rear == (front-1)%(size-1) )
+
+    empty if ( front == -1 ) or ( rear+1 % size == front )
+
+    enqueue
+      if front == -1 , front = 0
+      queue[ rear+1 % size ] = value
+
+    dequeue
+      queue[front]
+      front = front+1 % size
+
+    display queue
  */
 
  /* Textbook: 
