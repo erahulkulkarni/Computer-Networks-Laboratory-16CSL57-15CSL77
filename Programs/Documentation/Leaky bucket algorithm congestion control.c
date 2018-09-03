@@ -117,10 +117,10 @@
     int k;
 
     printf("\n Assume maximum packets the bucket can hold is bucket size.");
-    printf("\n Enter the bucket size : ");    scanf("%d", &bucketSize);
+    printf("\n Enter the bucket size : ");    
 
     printf("\n Assume packets the bucket leaks out every time unit is leak rate");
-    printf("\n Enter the leak rate : ");    scanf("%d", &leakRate);
+    printf("\n Enter the leak rate : ");    
 
     printf("\n Enter number of time unit instances to simulate : ");
     scanf("%d", &time);
@@ -129,7 +129,6 @@
     for( i=0; i<time; i++ )
      {
        printf("\n\n Time t = %d\n   Enter the number of incoming packets: ", i); 
-       scanf("%d", &numberOfInComingPacketsAtTimeT);
 
        // If OpenMP (Open Multi-Processing) omp.h is used, and threading is enabled
        //     then, both enqueuing and dequeuing can be done simultaneously
@@ -138,11 +137,11 @@
        printf("\n     Enter the content of incoming packets at time t = %d\n", i); 
        for( j=0; j<numberOfInComingPacketsAtTimeT; j++ )        // Add to bucket
         {
-         if( totalPacketsInBucket < bucketSize ) // If space in bucket, then
+         if(  ) // If space in bucket, then
           { // Read the content and enqueue in bucket, content is just to 
             printf("       Enter content of packet: ");    // distinguish packets
-            scanf("%d", &bucket[++rear]);  // Add packet to rear of queue
-            totalPacketsInBucket++;        // Increment number of packets in bucket
+              // Add packet to rear of queue
+                    // Increment number of packets in bucket
           }
          else
           { // totalPacketsInBucket == bucketSize, cannot add packet into bucket
@@ -151,16 +150,16 @@
         }
 
        printf("\n\n     Outgoing packets at time t = %d are ", i);
-       for( j=0; j<leakRate; j++ ) // Remove leakRate number of packets from bucket
+       for(  ) // Remove leakRate number of packets from bucket
         {
-         if( totalPacketsInBucket == 0 )
+         if(  )
           {
             printf("\n       Bucket empty, underflow, no packets to leak out");
           }
          else
           { // Remove from front of bucket/queue; Increment front 
-            printf("\n       Packet with content %d leaked out", bucket[front++]);
-            totalPacketsInBucket--;    // and decrement number of packets in bucket
+            
+                // and decrement number of packets in bucket
           } 
         }
      }        
