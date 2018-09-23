@@ -101,6 +101,8 @@
  */
  
  #include <stdio.h>    // Bucket == Queue	
+ #include <stdlib.h>   // For random function
+ #include <time.h>     // For time function
 
  int main()            // Assume packets have fixed size, and
   {                    //   Bucket size == number packets bucket can hold
@@ -110,38 +112,49 @@
     int front = 0;          // Front of bucket/queue
     int rear = -1;          // Rear of bucket/queue
     int leakRate;           // Packets let out of bucket per second
-    int time;               // Unit time instances the network traffic is simulated
+    int timeInstances;      // Unit time instances the network traffic is simulated
+    // Variable name changed from time to timeInstance,
+    //   because function name is also time
     int numberOfInComingPacketsAtTimeT;
     int i;
     int j;
     int k;
 
+    srand ( time(NULL) ); // Initialize seed for random number generation
+
     printf("\n Assume maximum packets the bucket can hold is bucket size.");
-    printf("\n Enter the bucket size : ");    
+    bucketSize = ( rand() % 5 ) + 1 ;  // Limiting bucket size from 1 to 5
+    printf("\n Randomly selected bucket size = %d \n", bucketSize);
 
     printf("\n Assume packets the bucket leaks out every time unit is leak rate");
-    printf("\n Enter the leak rate : ");    
+    leakRate  = ( rand() % 5 ) + 1 ;  // Limiting leak rate from 1 to 5
+    printf("\n Randomly selected leak rate = %d \n", leakRate);
 
-    printf("\n Enter number of time unit instances to simulate : ");
-    scanf("%d", &time);
+    timeInstances = ( rand() % 5 ) + 1 ;  // Limiting time instances from 1 to 5
+    printf("\n Randomly selected time instances to simulate = %d \n",
+                                                         timeInstances);
 
     printf("\n Leaky bucket: ");
     for( i=0; i<time; i++ )
      {
-       printf("\n\n Time t = %d\n   Enter the number of incoming packets: ", i); 
+       printf("\n\n Time t = %d\n ", i); // limiting numberOfInComingPacketsAtTimeT
+       numberOfInComingPacketsAtTimeT = rand() % 10; //  from 0 to 9 
+
+       printf("\n     Number of in coming packets at time %d = %d Packets \n", i, 
+                                     numberOfInComingPacketsAtTimeT);
 
        // If OpenMP (Open Multi-Processing) omp.h is used, and threading is enabled
        //     then, both enqueuing and dequeuing can be done simultaneously
        //     which resembles real life inflow and outflow of packets from bucket
 
-       printf("\n     Enter the content of incoming packets at time t = %d\n", i); 
        for( j=0; j<numberOfInComingPacketsAtTimeT; j++ )        // Add to bucket
         {
          if(  ) // If space in bucket, then
-          { // Read the content and enqueue in bucket, content is just to 
-            printf("       Enter content of packet: ");    // distinguish packets
-              // Add packet to rear of queue
+          { // Read the content and enqueue in bucket, content is to differentiate
+            bucket[++rear] = rand() % 100; //  packets, add packet to rear of queue
                     // Increment number of packets in bucket
+            printf("\n       Randomly assigned content of incoming packets = %d\n",
+                                                                    bucket[rear]);
           }
          else
           { // totalPacketsInBucket == bucketSize, cannot add packet into bucket
@@ -243,4 +256,100 @@
        Packet with content 103 leaked out
        Packet with content 104 leaked out
        Packet with content 106 leaked out
+ */
+
+ /* Output:
+
+ Assume maximum packets the bucket can hold is bucket size.
+ Randomly selected bucket size = 4 
+
+ Assume packets the bucket leaks out every time unit is leak rate
+ Randomly selected leak rate = 4 
+
+ Randomly selected time instances to simulate = 4 
+ Leaky bucket: 
+
+ Time t = 0
+ 
+     Number of in coming packets at time 0 = 0 Packets 
+
+     Outgoing packets at time t = 0 are 
+
+       Bucket empty, underflow, no packets to leak out
+
+       Bucket empty, underflow, no packets to leak out
+
+       Bucket empty, underflow, no packets to leak out
+
+       Bucket empty, underflow, no packets to leak out
+
+ Time t = 1
+ 
+     Number of in coming packets at time 1 = 2 Packets 
+
+       Randomly assigned content of incoming packets = 71
+
+       Randomly assigned content of incoming packets = 40
+
+
+     Outgoing packets at time t = 1 are 
+
+       Packet with content 71 leaked out
+
+       Packet with content 40 leaked out
+
+       Bucket empty, underflow, no packets to leak out
+
+       Bucket empty, underflow, no packets to leak out
+
+ Time t = 2
+ 
+     Number of in coming packets at time 2 = 9 Packets 
+
+       Randomly assigned content of incoming packets = 51
+
+       Randomly assigned content of incoming packets = 73
+
+       Randomly assigned content of incoming packets = 65
+
+       Randomly assigned content of incoming packets = 65
+
+       Bucket Overflow, drop the packet
+
+       Bucket Overflow, drop the packet
+
+       Bucket Overflow, drop the packet
+
+       Bucket Overflow, drop the packet
+
+       Bucket Overflow, drop the packet
+
+     Outgoing packets at time t = 2 are 
+
+       Packet with content 51 leaked out
+
+       Packet with content 73 leaked out
+
+       Packet with content 65 leaked out
+
+       Packet with content 65 leaked out
+
+ Time t = 3
+ 
+     Number of in coming packets at time 3 = 2 Packets 
+
+       Randomly assigned content of incoming packets = 35
+
+       Randomly assigned content of incoming packets = 93
+
+
+     Outgoing packets at time t = 3 are 
+
+       Packet with content 35 leaked out
+
+       Packet with content 93 leaked out
+
+       Bucket empty, underflow, no packets to leak out
+
+       Bucket empty, underflow, no packets to leak out
  */
