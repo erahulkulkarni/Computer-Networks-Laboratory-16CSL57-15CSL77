@@ -189,6 +189,60 @@
     return m;           //   return m
   }
 
+ /*
+   Procedure to computes a to power of b mod n
+
+   MODULAR-EXPONENTIATION( a, b, n )
+     c ← 0
+     d ← 1
+     let ( b_k , b_k-1 , . . . b_1 , b_0 ) be the binary representation of b
+
+     for i ← k down to 0
+         c ← 2c
+         d ← ( d * d ) mod n
+
+         if b_i == 1
+             c ← c + 1
+             d ← ( d * a ) mod n
+
+     return d
+
+     d is a^b mod n
+ */
+
+ int modularExponentiation( int a, int b, int n )
+  {  // returns d = a to the power of b mod n
+     int c = 0;  // c ← 0
+     int d = 1;  // d ← 1
+     
+     int num = b;
+     int binary[16]; // b_k, b_k-1,...b_1, b_0 be binary representation of b
+     int k = 0; // length of binary representation of b
+
+     int i;
+
+     while ( num != 0 ) // convert b to binary
+      {
+        binary[ k++ ] = num % 2;
+        num = num / 2;
+      }
+     
+     for( i = k-1 ; i>=0; i-- ) // i ← k down to 0
+      {
+         c = 2*c ;              // c ← 2c
+         d = ( d * d ) % n;     // d ← ( d * d ) mod n
+
+         if ( binary[i] == 1)                  // if b_i == 1
+           {
+             c = c + 1;                        // c ← c + 1
+             d = ( d * a ) % n;                // d ← ( d * a ) mod n
+           }
+      }
+
+     return d; 
+  }
+
+
  int main()
   { 
     int p, q, n, lambdaN, d, e, length, i;
