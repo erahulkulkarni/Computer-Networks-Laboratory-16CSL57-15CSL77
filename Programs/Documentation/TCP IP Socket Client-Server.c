@@ -5,19 +5,21 @@
         file if present.
  */
 
- /*Process-to-process delivery needs two identifiers, IP address and the port number, 
-   at each end to make a connection.   
+ /*Process-to-process delivery needs two identifiers,\
+     IP address and the port number, at each end to make a connection
 
-   IP to recognize computer on network, then recognize process on the computer
-     using port number
+   IP to recognize computer on network, port number to recognize process on 
+     the computer
 
    IP Address: uniquely defines a host on the Internet, logical addressing, 
      hierarchical
 
    Socket Addresses: combination of an IP address and a port number  
 
-   Now turning to UNIX (every thing looks like a file!)
-   Sockets can be used for interprocess communication
+   Sockets can be used for interprocess communication(IPC)
+
+   In UNIX - every thing looks like a file!
+
    Socket is a type of file used for network communication between processes, 
      network IPC, IPC Inter Process Communication
    Or for non-network communication between processes on a single host
@@ -58,7 +60,7 @@
      Returns: file (socket) descriptor if OK, –1 on error
      
      domain:  nature of the communication, like AF_ (for address family)
-       AF_INET IPv4 Internet domain      
+       AF_INET IPv4 Internet domain  , or AF_INET6 for IPv6 protocol
 
      type: type of the socket, communication characteristics, like SOCK_STREAM
        meaning sequenced, reliable, bidirectional, connection-oriented byte streams
@@ -69,41 +71,97 @@
        file or socket and free up the file descriptor for reuse
  */
 
- /*Addressing: machine's network address helps us identify the computer on the 
-     network we wish to contact, and the service helps us identify the particular 
-     process on the computer
-
-   Byte Ordering: big and little endian
-
-   API s for converting between the processor byte order and the network byte order
- */
-
- /*Address identifies a socket endpoint in a particular communication domain
-   IPv4 Internet domain ( AF_INET ), a socket address is represented by 
-     a sockaddr_in structure:
-
-     struct in_addr { in_addr_t     s_addr; };         // IPv4 address
-
-     struct sockaddr_in {
-                          sa_family_t     sin_family;  // address family
-			  in_port_t       sin_port;    // port number
-                          struct in_addr sin_addr;     // IPv4 address
-                        };
- */
-
-
- /*Linux Programmer's Manual
-   man socket
-   socket - create an endpoint for communication
-
-   man getaddrinfo
+ /*
+    setsockopt
+    getsockopt, setsockopt - get and set options on sockets
 
  */
 
+ /*
+    bind - bind a name to a socket
+ */
+
+ /*
+    listen - listen for connections on a socket
+ */
+
+ /*
+    connect - initiate a connection on a socket
+ */
+
+ /*
+    accept, accept4 - accept a connection on a socket
+ */ 
+
+ /*
+    send, sendto, sendmsg - send a message on a socket
+ */ 
+
+ /*
+    read - read from a file descriptor
+ */ 
+
+ /*
+    At       Server                     Client
+       
+        create   Socket            create   Socket
+                  ↑ ↓                        ↑ ↓
+                  ↑ ↓                        ↑ ↓  
+               setsockopt                    ↑ ↓    
+                  ↑ ↓                        ↑ ↓
+                  ↑ ↓                        ↑ ↓          
+                 bind                        ↑ ↓      
+                  ↑ ↓                        ↑ ↓
+                  ↑ ↓                        ↑ ↓          
+                 listen ⇄ ⇄ ⇄ ⇄ ⇄ connect ⇄  ↑ ↓                    
+                  ↑ ↓                        ↑ ↓
+                  ↑ ↓                        ↑ ↓          
+                 accept                      ↑ ↓      
+                  ↑ ↓                        ↑ ↓
+                  ↑ ↓                        ↑ ↓          
+             send /receive ⇄ ⇄ ⇄ ⇄ ⇄ ⇄ ⇄ send /receive 
+
+ */
+
+
+ /* Address identifies a socket endpoint in a particular communication domain
+    IPv4 Internet domain ( AF_INET ), a socket address is represented by 
+      a sockaddr_in structure:
+
+      struct in_addr { in_addr_t     s_addr; };         // IPv4 address
+
+      struct sockaddr_in {
+                           sa_family_t     sin_family;  // address family
+                           in_port_t       sin_port;    // port number
+                           struct in_addr sin_addr;     // IPv4 address
+                         };
+ */
+
+
+ /* Linux Programmer's Manual
+    manual or man page
+   
+    man socket
+    socket - create an endpoint for communication
+
+    man getaddrinfo
+
+ */
+
+ /* Addressing: machine's network address helps us identify the computer on the 
+      network we wish to contact, and the service helps us identify the particular 
+      process on the computer
+
+    Byte Ordering: big and little endian
+
+    APIs for converting between the processor byte order and the network byte order
+ */
 
 
 
- /*Textbook: W. Richard Stevens, Advanced Programming in the UNIX Environment, 
-     Pearson Education
-     RIP - Richard Stevens, also Rajeev Motwani
+ /* Textbook: W. Richard Stevens, Advanced Programming in the UNIX Environment, 
+      Pearson Education
+ */
+ /*
+          RIP - Richard Stevens, Rajeev Motwani
  */
