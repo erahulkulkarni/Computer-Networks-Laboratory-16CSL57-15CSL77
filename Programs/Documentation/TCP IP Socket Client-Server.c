@@ -5,7 +5,35 @@
         file if present.
  */
 
- /*Process-to-process delivery needs two identifiers,\
+ /* Linux Programmer's Manual , Manual page, or man page
+    man protocols
+    or
+    cat /etc/protocols
+
+    Just INET or ip refers to IP version 4
+    INET6 or ip6 to IP version 6   
+
+    AF Address Family
+
+    PF Protocol Family
+ */ 
+
+ /* TCP Socket , Socket Address , Port , IP Address
+
+    A socket consists of three things:
+      An IP address
+      A transport protocol
+      A port number
+
+    A port is a number between 1 and 65535 inclusive that signifies a logical
+      gate in a device
+    Every connection between a client and server requires a unique socket
+
+    8080 is a port
+    ( 10.10.1.2 , TCP , port 8080 ) is a socket
+ */
+
+ /*Process-to-process delivery needs two identifiers,
      IP address and the port number, at each end to make a connection
 
    IP to recognize computer on network, port number to recognize process on 
@@ -44,13 +72,15 @@
 
  /*Socket interfaces: originally introduced in BSD in the early 1980s
 
+   Socket creates endpoint for communication
+
    socket is an abstraction of a communication endpoint
 
    Like file descriptors used to access a file, socket descriptors used to access 
      sockets
 
    Functions that deal with file descriptors, such as read and write , will work 
-     with a socket descriptor
+     with a socket descriptor also
 
    To create a socket, use the socket function
 
@@ -66,19 +96,112 @@
        meaning sequenced, reliable, bidirectional, connection-oriented byte streams
     
      protocol: usually zero, selects default protocol for given domain, socket type
+               This is the same number which appears on protocol field in the IP 
+               header of a packet.(man protocols for more details 
 
      When done using the file descriptor, call close to relinquish access to the 
        file or socket and free up the file descriptor for reuse
+
+     int server_fd = socket(AF_INET, SOCK_STREAM, 0)
  */
 
  /*
-    setsockopt
-    getsockopt, setsockopt - get and set options on sockets
+    setsockopt - set options on sockets
+    getsockopt()  and setsockopt() manipulate options for the socket referred to 
+      by the file descriptor sockfd
 
+    Options may exist at multiple protocol levels; they are always present at the
+      uppermost socket level
+
+       #include <sys/types.h>
+       #include <sys/socket.h>
+
+       int setsockopt(int sockfd, int level, int optname,
+                      const void *optval, socklen_t optlen);
+        
+    Helps in reuse of address and port , prevents error "address already in use"
+
+    
+
+    When manipulating socket options, the level at which the option resides and 
+      the name of the option must  be specified
+
+    To  manipulate options at the sockets API level
+      level is specified as SOL_SOCKET
+
+    Optname and any specified options are passed uninterpreted to the appropriate
+      protocol module for interpretation
+    File <sys/socket.h> contains definitions for socket level options
+    Most  socket-level  options  utilize  an int argument for optval
+    For setsockopt(), the argument should be nonzero to enable a boolean option, 
+      or zero if the option is to be disabled
+
+    Option name: SO_REUSEADDR
+      Indicates  that the rules used in validating addresses supplied in a bind 
+        call should allow reuse of local addresses
+      For AF_INET sockets this means that a socket may bind, except when there is
+        an active listening socket bound to the address
+      When the listening socket is bound to INADDR_ANY with a specific port then 
+        it is not possible to bind to this port for any local address
+
+    Option name: SO_REUSEPORT
+      Permits multiple AF_INET or AF_INET6 sockets to be bound to an identical 
+        socket address
+
+    The arguments optval and optlen are used to access option values for setsockopt
+    If no option value is to be supplied or returned, optval may be NULL
+
+    int option = 1
+
+    setsockopt ( server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
+                                                  &option , sizeof ( option ) )
+
+    man 7 socket
+ */
+
+ /* 
+    Address identifies a socket endpoint in a particular communication domain
+    IPv4 Internet domain ( AF_INET ), a socket address is represented by 
+      a sockaddr_in structure:
+
+      struct in_addr { in_addr_t     s_addr; };         // IPv4 address
+
+      struct sockaddr_in {
+                           sa_family_t     sin_family;  // address family
+                           in_port_t       sin_port;    // port number
+                           struct in_addr sin_addr;     // IPv4 address
+                         };
+
+    #define PORT 8080
+
+    struct sockaddr_in address; 
+
+    address.sin_family = AF_INET; 
+    address.sin_addr.s_addr = INADDR_ANY; 
+                     // socket accepts connections to all the IPs of the machine
+    address.sin_port = htons( PORT ); 
+                     // convert values between host and network byte order
  */
 
  /*
     bind - bind a name to a socket
+
+    When  a  socket  is  created  with socket, it exists in a name space 
+      (address family) but has no address assigned to it
+    bind() assigns the address specified by sockaddr addr to the socket referred
+      to by the file descriptor sockfd
+    addrlen specifies the size, in bytes, of the address structure
+      pointed to by addr
+
+    This operation is called "assigning a name to a socket"
+
+       #include <sys/types.h>
+       #include <sys/socket.h>
+
+       int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+
+    bind( server_fd, (struct sockaddr *) &address ,  sizeof(address) );
+    
  */
 
  /*
@@ -123,31 +246,6 @@
 
  */
 
-
- /* Address identifies a socket endpoint in a particular communication domain
-    IPv4 Internet domain ( AF_INET ), a socket address is represented by 
-      a sockaddr_in structure:
-
-      struct in_addr { in_addr_t     s_addr; };         // IPv4 address
-
-      struct sockaddr_in {
-                           sa_family_t     sin_family;  // address family
-                           in_port_t       sin_port;    // port number
-                           struct in_addr sin_addr;     // IPv4 address
-                         };
- */
-
-
- /* Linux Programmer's Manual
-    manual or man page
-   
-    man socket
-    socket - create an endpoint for communication
-
-    man getaddrinfo
-
- */
-
  /* Addressing: machine's network address helps us identify the computer on the 
       network we wish to contact, and the service helps us identify the particular 
       process on the computer
@@ -161,6 +259,8 @@
 
  /* Textbook: W. Richard Stevens, Advanced Programming in the UNIX Environment, 
       Pearson Education
+    And
+    Stack overflow
  */
  /*
           RIP - Richard Stevens, Rajeev Motwani
