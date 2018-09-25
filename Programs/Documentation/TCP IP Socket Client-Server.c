@@ -174,12 +174,12 @@
 
     #define PORT 8080
 
-    struct sockaddr_in address; 
+    struct sockaddr_in address
 
-    address.sin_family = AF_INET; 
-    address.sin_addr.s_addr = INADDR_ANY; 
+    address.sin_family = AF_INET
+    address.sin_addr.s_addr = INADDR_ANY
                      // socket accepts connections to all the IPs of the machine
-    address.sin_port = htons( PORT ); 
+    address.sin_port = htons( PORT )
                      // convert values between host and network byte order
  */
 
@@ -206,22 +206,78 @@
 
  /*
     listen - listen for connections on a socket
+
+       #include <sys/types.h>
+       #include <sys/socket.h>
+
+       int listen(int sockfd, int backlog);
+
+    listen marks the socket referred to by sockfd as a passive socket
+    socket that will be used to accept incoming connection requests using accept
+
+    backlog argument defines the maximum length to which the queue of pending 
+      connections for sockfd may grow
+    If a connection request arrives when the queue is full, the client may 
+      receive an ECONNREFUSED error    
+    
+    listen(server_fd, 2)
  */
 
  /*
-    connect - initiate a connection on a socket
+    accept - accept a connection on a socket
+
+       #include <sys/types.h>
+       #include <sys/socket.h>
+
+       int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+
+    accept is used with connection-based socket types, extracts the first 
+      connection request on the queue of pending connections for the listening 
+      socket, sockfd
+      creates a new connected socket, and returns a new file descriptor 
+        referring to that socket
+
+    argument sockfd is a socket that has been created with socket, bound to a
+      local address with bind, and is listening for connections after a listen
+
+    int newSocket
+   
+    newSocket = accept ( server_fd , (struct sockaddr *)&address,  
+                                                      (socklen_t*) & addrlen) )
+ */ 
+
+ /*
+    Now read from new file descriptor newSocket into buffer using read
+
+       #include <unistd.h>
+
+       ssize_t read(int fd, void *buf, size_t count)
+
+    char buffer[1024] = {'\0'}
+    int numberOfBytesRead
+
+    numberOfBytesRead = read( newSocket , buffer, 1024)
+
  */
 
- /*
-    accept, accept4 - accept a connection on a socket
- */ 
+ /*    
+    send - send a message on a socket, transmit a message to another socket
 
- /*
-    send, sendto, sendmsg - send a message on a socket
- */ 
+       #include <sys/types.h>
+       #include <sys/socket.h>
 
- /*
-    read - read from a file descriptor
+       ssize_t send(int sockfd, const void *buf, size_t len, int flags); 
+
+    send may be used only when the socket is in a connected state, so that the 
+      intended recipient is known
+    message is found in buf and has length len
+
+    Can write API be used instead
+
+    char *serverMessage = "Server says"
+
+    send ( newSocket , serverMessage , strlen(serverMessage) , 0 )
+    
  */ 
 
  /*
@@ -243,9 +299,19 @@
                   ↑ ↓                        ↑ ↓
                   ↑ ↓                        ↑ ↓          
              send /receive ⇄ ⇄ ⇄ ⇄ ⇄ ⇄ ⇄ send /receive 
-
  */
 
+ // Assume: Like Mark Watney escaping Mars gravity, assume no errors would occur
+ //         The Martian‎; by ‎Andy Weir
+
+ /*
+    connect - initiate a connection on a socket
+ */
+
+ /*
+    read - read from a file descriptor
+ */ 
+ 
  /* Addressing: machine's network address helps us identify the computer on the 
       network we wish to contact, and the service helps us identify the particular 
       process on the computer
@@ -254,8 +320,6 @@
 
     APIs for converting between the processor byte order and the network byte order
  */
-
-
 
  /* Textbook: W. Richard Stevens, Advanced Programming in the UNIX Environment, 
       Pearson Education
