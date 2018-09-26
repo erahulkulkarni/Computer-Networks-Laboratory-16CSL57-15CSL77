@@ -102,8 +102,10 @@
      When done using the file descriptor, call close to relinquish access to the 
        file or socket and free up the file descriptor for reuse
 
-     int server_fd = socket(AF_INET, SOCK_STREAM, 0)
+     int serverFd = socket(AF_INET, SOCK_STREAM, 0)
  */
+
+ // Server side
 
  /*
     setsockopt - set options on sockets
@@ -153,7 +155,7 @@
 
     int option = 1
 
-    setsockopt ( server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
+    setsockopt ( serverFd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
                                                   &option , sizeof ( option ) )
 
     man 7 socket
@@ -200,7 +202,7 @@
 
        int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 
-    bind( server_fd, (struct sockaddr *) &address ,  sizeof(address) );
+    bind( serverFd, (struct sockaddr *) &address ,  sizeof(address) );
     
  */
 
@@ -220,7 +222,7 @@
     If a connection request arrives when the queue is full, the client may 
       receive an ECONNREFUSED error    
     
-    listen(server_fd, 2)
+    listen(serverFd, 2)
  */
 
  /*
@@ -242,7 +244,7 @@
 
     int newSocket
    
-    newSocket = accept ( server_fd , (struct sockaddr *)&address,  
+    newSocket = accept ( serverFd , (struct sockaddr *)&address,  
                                                       (socklen_t*) & addrlen) )
  */ 
 
@@ -301,15 +303,119 @@
              send /receive ⇄ ⇄ ⇄ ⇄ ⇄ ⇄ ⇄ send /receive 
  */
 
- // Assume: Like Mark Watney escaping Mars gravity, assume no errors would occur
- //         The Martian‎; by ‎Andy Weir
-
- /*
-    connect - initiate a connection on a socket
+ /* g++ server.c -o server
+    g++ client.c -o client
  */
 
  /*
-    read - read from a file descriptor
+    Assume: Like Mark Watney escaping Mars gravity, assume no errors would occur
+            The Martian‎; by ‎Andy Weir
+            else
+            Test for errors on making each function call
+ */
+
+ // Client Side
+
+ /*
+    create a socket , save socket descriptor
+
+    int socketFd
+    
+    socketFd = socket( AF_INET, SOCK_STREAM, 0)
+ 
+ */
+
+ /* Where to connect - server
+
+    Set values of server address to connect to
+
+
+    struct sockaddr_in serv_addr     
+
+    Initialize using memory set memset - fill memory with a constant byte
+
+       #include <string.h>
+
+       void *memset(void *s, int c, size_t n);
+    
+    
+    memset( &serv_addr, '0', sizeof(serv_addr))
+
+    #define PORT 8080 
+
+    serv_addr.sin_family = AF_INET       // Connect using IVP4 protocol
+    serv_addr.sin_port = htons(PORT)     // To the same port 8080
+
+    Port is done, how about IP address
+ */
+
+ /*
+   Local server: when using the same system as server, address 127.0.0.1
+   Like in XAMPP , WAMPP 
+
+   But, IPv4 addresses has to converted from text to binary form
+
+       #include <arpa/inet.h>
+
+       int inet_pton(int af, const char *src, void *dst);
+   
+   inet_pton function converts the character string src into a network address 
+     structure in the af address family, 
+     then copies the network address structure to dst
+
+   inet_pton( AF_INET, "127.0.0.1", &serv_addr.sin_addr)
+    
+ */
+
+ /* Now connect to server
+
+    connect - initiate a connection on a socket
+
+       #include <sys/types.h>
+       #include <sys/socket.h>
+
+       int connect(int sockfd, const struct sockaddr *addr,
+                   socklen_t addrlen);
+
+    connect() system call connects the socket referred to by the file descriptor
+      sockfd to the address specified by addr
+    addrlen argument specifies the size of addr
+
+    Connection-based protocol sockets may successfully connect() only once
+    Connectionless  protocol sockets  may use connect() multiple times to change
+      their association
+
+    connect( socketFd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))
+    
+ */
+
+ /* If connection is successful, then send/read to/from socket
+ 
+    send - send a message on a socket, transmit a message to another socket
+
+       #include <sys/types.h>
+       #include <sys/socket.h>
+
+       ssize_t send(int sockfd, const void *buf, size_t len, int flags); 
+
+    char clientMessage[18] = "Hello from Client"
+
+    send( socketFd , clientMessage , strlen(clientMessage) , 0 )
+
+
+    Now read from new file descriptor newSocket into buffer using read
+
+       #include <unistd.h>
+
+       ssize_t read(int fd, void *buf, size_t count)
+
+
+    int numberOfBytesRead
+
+    char buffer[1024] = {'\0'}
+
+    numberOfBytesRead = read( socketFd , buffer, 1024) 
+    
  */ 
  
  /* Addressing: machine's network address helps us identify the computer on the 
