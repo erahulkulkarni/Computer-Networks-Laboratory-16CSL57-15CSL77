@@ -255,11 +255,29 @@
 
        ssize_t read(int fd, void *buf, size_t count)
 
-    char buffer[1024] = {'\0'}
+    char fileName[256] = {'\0'}
     int numberOfBytesRead
 
-    numberOfBytesRead = read( newSocket , buffer, 1024)
+    As the client is requesting for content of file, read the file name
+    numberOfBytesRead = read( newSocket , fileName, 1024)
+ */
 
+ /*
+    open - open and possibly create a file
+
+       #include <sys/types.h>
+       #include <sys/stat.h>
+       #include <fcntl.h>
+
+       int open(const char *pathname, int flags);
+       int open(const char *pathname, int flags, mode_t mode);
+
+    open returns a file descriptor, a small, nonnegative integer for use in 
+      subsequent system calls like read, write, lseek, fcntl
+
+    flags must include one of the following access modes:O_RDONLY, O_WRONLY, 
+      or O_RDWR. These request opening the file read-only, write-only, or 
+      read/write, respectively
  */
 
  /*    
@@ -274,11 +292,11 @@
       intended recipient is known
     message is found in buf and has length len
 
-    Can write API be used instead
+    Can write API be used instead?
 
-    char *serverMessage = "Server says"
+    while content can be read from file into buffer
 
-    send ( newSocket , serverMessage , strlen(serverMessage) , 0 )
+       send ( newSocket , buffer , strlen(buffer) , 0 )
     
  */ 
 
