@@ -150,13 +150,23 @@
       Permits multiple AF_INET or AF_INET6 sockets to be bound to an identical 
         socket address
 
+    SO_REUSEPORT is not available on older POSIX systems
+
     The arguments optval and optlen are used to access option values for setsockopt
     If no option value is to be supplied or returned, optval may be NULL
 
     int option = 1
 
+    If SO_REUSEPORT is available on your systems, then setsockopt can be
+
     setsockopt ( serverFd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
                                                   &option , sizeof ( option ) )
+
+
+    else if SO_REUSEPORT is not available on your systems, setsockopt can be
+    setsockopt ( serverFd, SOL_SOCKET, SO_REUSEADDR , 
+                                                  &option , sizeof ( option ) )
+
 
     man 7 socket
  */
